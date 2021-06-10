@@ -127,7 +127,7 @@ def scale_invariante_martingale_regularization(M, reg_lam):
 
 
 def compute_mixed_sinkhorn_loss(f_real, f_fake, m_real, m_fake, h_fake, sinkhorn_eps, sinkhorn_l,
-                                f_real_p, f_fake_p, m_real_p, h_real_p, h_fake_p):
+                                f_real_p, f_fake_p, m_real_p, h_real_p, h_fake_p, scale=False):
     '''
     :param x and x'(f_real, f_real_p): real data of shape [batch size, time steps, features]
     :param y and y'(f_fake, f_fake_p): fake data of shape [batch size, time steps, features]
@@ -142,10 +142,10 @@ def compute_mixed_sinkhorn_loss(f_real, f_fake, m_real, m_fake, h_fake, sinkhorn
     f_fake = f_fake.reshape(f_fake.shape[0], f_fake.shape[1], -1)
     f_real_p = f_real_p.reshape(f_real_p.shape[0], f_real_p.shape[1], -1)
     f_fake_p = f_fake_p.reshape(f_fake_p.shape[0], f_fake_p.shape[1], -1)
-    loss_xy = compute_sinkhorn(f_real, f_fake, h_real, m_real, sinkhorn_eps, sinkhorn_l)
-    loss_xyp = compute_sinkhorn(f_real_p, f_fake_p, h_fake_p, m_real_p, sinkhorn_eps, sinkhorn_l)
-    loss_xx = compute_sinkhorn(f_real, f_real_p, h_real_p, m_real, sinkhorn_eps, sinkhorn_l)
-    loss_yy = compute_sinkhorn(f_fake, f_fake_p, h_fake_p, m_fake, sinkhorn_eps, sinkhorn_l)
+    loss_xy = compute_sinkhorn(f_real, f_fake, h_fake, m_real, sinkhorn_eps, sinkhorn_l, scale=scale)
+    loss_xyp = compute_sinkhorn(f_real_p, f_fake_p, h_fake_p, m_real_p, sinkhorn_eps, sinkhorn_l, scale=scale)
+    loss_xx = compute_sinkhorn(f_real, f_real_p, h_real_p, m_real, sinkhorn_eps, sinkhorn_l, scale=scale)
+    loss_yy = compute_sinkhorn(f_fake, f_fake_p, h_fake_p, m_fake, sinkhorn_eps, sinkhorn_l, scale=scale)
 
     loss = loss_xy + loss_xyp - loss_xx - loss_yy
     return loss
